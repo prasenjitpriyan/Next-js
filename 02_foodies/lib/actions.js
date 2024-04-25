@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { saveMeal } from "./meals";
+import { revalidatePath } from "next/cache";
 
 function isInvalidText(text) {
   return !text || text.trim() === "";
@@ -27,10 +28,13 @@ export async function shareMeal(prevState, formData) {
     meal.image.size === 0
   ) {
     return {
-      message: 'Invalid input.'
-    }
+      message: "Invalid input.",
+    };
   }
 
   await saveMeal(meal);
+  // -- Nested pages revalidated here.
+  //revalidatePath("/meals", "layout");
+  revalidatePath("/meals");
   redirect("/meals");
 }
